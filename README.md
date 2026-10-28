@@ -96,6 +96,10 @@ fetch_credit_karma_transactions:42:in `get_transactions': error: 401 body: {"err
 $ START_CURSOR=dHhuIzIwMjMtMDItMjEjMTgzODQ4MzIzMF8w ruby fetch_credit_karma_transactions
 ```
 
+## Stale query hash
+
+The script sends Credit Karma's safelisted `GetTransactions` operation (a sha256 hash) instead of a query document. If a new web deploy rotates that hash, the script exits with `400 {"message":"No query found"}`. Copy `extensions.persistedQuery.sha256Hash` from a `graphql` request on https://www.creditkarma.com/networth/transactions and rerun with `CK_QUERY_HASH` set to that value.
+
 ## Debugging
 
 Set the env var `DEBUG=1` to see the json entries for each transaction printed
@@ -107,6 +111,3 @@ install awesome_print`
 Might be nice to handle the `TOKEN_NEEDS_REFRESH` automatically, but that'd
 require setting the refresh token initially as well, which is probably just as
 much work as setting the `START_CURSOR` value from where it left off.
-
-Would be nice to cleanup the gigantic graphql query I copied to just what's
-needed, but who cares, it works, and it's tedious to modify
